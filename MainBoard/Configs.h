@@ -32,5 +32,5 @@
 #define BTN_PIN 9 
 
 #define CRITICAL_DATE "Dec 11 2019"
-#define CRITICAL_TIME "16:00:00"
-#define TIME_DIFFERENCE_SECONDS 60*2 //4*60*60 // in seconds
+#define CRITICAL_TIME "20:00:00"
+#define TIME_DIFFERENCE_SECONDS 60*20 //4*60*60 // in seconds

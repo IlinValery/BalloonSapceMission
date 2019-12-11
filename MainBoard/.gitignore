@@ -1,7 +1,13 @@
-Cache/*
+*Cache*/*
 Backups/*
 User/*
 logs/*
+Cookies*
+*.json
+machineid
+Network*
+
+*.sock
 
 .vscode/*
 !.vscode/settings.json

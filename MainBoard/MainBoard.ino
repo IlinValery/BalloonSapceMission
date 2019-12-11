@@ -1,6 +1,9 @@
-#include "Configs.h" // all defined variables
 
+
+#include "Configs.h" // all defined variables
 #include "src/Utils.h"
+
+
 /*
 String convertIntToBeautyString(int integer, int signCount)
 */
@@ -12,7 +15,7 @@ double tempDS18B20 = 0;
 byte addrTempSensor[8];
 byte typeTempSensor;
 unsigned long timeFromActivation = 0;
-int intervalTempSensor = 1000;
+const int intervalTempSensor = 1000;
 bool isTempSensorActive = false;
 bool goodStatusTempSensor = false;
 
@@ -93,24 +96,24 @@ float batteryStatus = 0.0;
 
 String logStringData = "";
 String fileName = "data.csv";
-String headToFile = String("h") + String(":") + String("m") + String(":") + String("s") + String(".") + String("ms") + String(FILE_SEPARATOR) +
-          String("lat") + String(FILE_SEPARATOR) +
-          String("lon") + String(FILE_SEPARATOR) +
-          String("tempBarometr") + String(FILE_SEPARATOR) +
-          String("pressureBarometr") + String(FILE_SEPARATOR) +
-          String("altitudeBarometr") + String(FILE_SEPARATOR) +
-          String("tempDS18B20") + String(FILE_SEPARATOR) +
-          String("batteryStatus");
+const String headToFile = String("h") + String(":") + String("m") + String(":") + String("s") + String(".") + String("ms") + String(FILE_SEPARATOR) +
+                        String("lat") + String(FILE_SEPARATOR) +
+                        String("lon") + String(FILE_SEPARATOR) +
+                        String("tempBarometr") + String(FILE_SEPARATOR) +
+                        String("pressureBarometr") + String(FILE_SEPARATOR) +
+                        String("altitudeBarometr") + String(FILE_SEPARATOR) +
+                        String("tempDS18B20") + String(FILE_SEPARATOR) +
+                        String("batteryStatus");
 
 
 #include "src/SDController.h"
 /*
-  void writeDataToSD(String filename);
-  void recorderHandler();
-  void initRecorderSDCard();
-  String getDateTimeForFile(const RtcDateTime& dt);
-  int getFileCount( String dir );
-  String initSDCard(const String& headToFile);
+    void writeDataToSD(String filename);
+    void recorderHandler();
+    void initRecorderSDCard();
+    String getDateTimeForFile(const RtcDateTime& dt);
+    int getFileCount( String dir );
+    String initSDCard(const String& headToFile);
 */
 
 //-----------------------
@@ -138,6 +141,7 @@ RtcDateTime criticalRtcDateTime = RtcDateTime(criticalDateTime.date, criticalDat
   String getStringTime(const RtcDateTime& dt);
   DateTime getDateTimeForRecording(const DateTime& critical);
 */
+
 #include "src/RetrievalSensors.h"
 /*
   void initRetrievalSensors();
@@ -224,6 +228,8 @@ void updateRetrievalModeSensors(){
 }
 
 void setup() {
+
+
   Serial.begin(9600);
   
   GPS_SERIAL.begin(9600);
