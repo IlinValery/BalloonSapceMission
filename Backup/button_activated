@@ -1,0 +1,86 @@
+//---Button---
+#define BTN_PIN 9 
+#include <GyverButton.h>
+GButton controllerButton(BTN_PIN);
+bool buttonWasActivated = false;
+
+#define PIEZO_PIN 8
+#define PIEZO_SIGNAL 2000
+#define PIEZO_DURATION 750
+#define LED_PIN_RED 13
+#define LED_PIN_GREEN 12  
+
+
+#include "CustomDateTime.h"
+#include <RtcDateTime.h>
+#include <EEPROM.h>
+const int eeAddress = 0;
+
+
+DateTime savedDateTime;
+
+
+
+DateTime dateTimeForRecording = {
+	__DATE__,
+	__TIME__
+};
+
+DateTime criticalDateTime = {
+	"Dec 14 2019",
+	"13:00:00"
+};
+
+RtcDateTime criticalRtcDateTime = RtcDateTime(criticalDateTime.date, criticalDateTime.time);
+
+
+
+
+
+void setup() {
+	Serial.begin(9600);
+	pinMode(LED_PIN_RED, OUTPUT);
+	pinMode(LED_PIN_GREEN, OUTPUT);
+
+	EEPROM.get(eeAddress, savedDateTime);
+	RtcDateTime savedRtcDateTime = RtcDateTime(savedDateTime.date, savedDateTime.time);
+	
+	Serial.println(savedDateTime.date);
+	Serial.println(savedDateTime.time);
+
+	Serial.println("\n\n\n");
+
+	
+	Serial.println(savedRtcDateTime.Year());
+	Serial.println(savedRtcDateTime.Month());
+	Serial.println(savedRtcDateTime.Day());
+	Serial.println(savedRtcDateTime.Hour());
+	Serial.println(savedRtcDateTime.Minute());
+	Serial.println(savedRtcDateTime.Second());
+}
+
+
+void loop() {
+  controllerButton.tick();
+
+  digitalWrite(LED_PIN_GREEN, buttonWasActivated);
+  digitalWrite(LED_PIN_RED, !buttonWasActivated);
+
+  if (!buttonWasActivated){
+    if (controllerButton.isTriple()){
+
+		buttonWasActivated = true;
+
+		//digitalWrite(ledPin, buttonWasActivated);
+		// piezo instead of this
+		tone(PIEZO_PIN, PIEZO_SIGNAL, PIEZO_DURATION);
+
+
+		EEPROM.put(eeAddress, dateTimeForRecording);
+
+
+
+    }
+  }
+
+}
