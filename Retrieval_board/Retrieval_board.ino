@@ -1,52 +1,68 @@
-#define LED_PIN_RED 2
-#define LED_PIN_GREEN 3  
+#include "Configs.h"
 
-#define PIEZO_PIN 4
-#define PIEZO_SIGNAL 1000
-
-#define BRIDGE_PIN 12
-
+//--retrievalPlay--
 float signalLevel = 5;
-int durationOfSequence = 2000;
+unsigned long prevStartPlay = 0;
+#include "src/SignalController.h"
+//----------------------------
+
+//--serialMega-----
+int incomingByte = 0;   // variable to keep bytes
+bool retrievalStatus = false;
+#include <SoftwareSerial.h>
+
+SoftwareSerial MegaSerial(SERIAL_RX, SERIAL_TX); // RX, TX
+
+#include "src/SerialController.h"
+//--------------------------------
+
+
+//---nRF--------------------------------
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+RF24 radio(9,10); // "создать" модуль на пинах 9 и 10 Для Уно
+
+byte address[][6] = {"1Node","2Node","3Node","4Node","5Node","6Node"};
+
+
+byte sequenceRecieved[SEQUENCE_COUNT];
+byte currentElement = 0;
+
+unsigned long prevRecieveMoment = 0;
+
+#include "src/nRFController.h"
+//----------------------------------------
+
+
 
 void setup() {
- pinMode(LED_PIN_GREEN, OUTPUT);
- pinMode(LED_PIN_RED, OUTPUT);
- Serial.begin(57600);
+ initSignal();
+
+ Serial.begin(9600);
+
+ initRF(sequenceRecieved);
+ initSerial();
+
 }
 void loop() {
+  updateSerial(retrievalStatus);
 
-  // check signal level here
 
+  updateRF(prevRecieveMoment);
   
-  if (signalLevel > 4) {
-    if (digitalRead(BRIDGE_PIN)) {
-      playSignal(durationOfSequence);
-      Serial.println(digitalRead(BRIDGE_PIN));
+  
+  if (retrievalStatus) {
+    radioUp();
+    // Serial.println(getSignalLevel(sequenceRecieved));
+    if (getSignalLevel(sequenceRecieved) > int(SEQUENCE_COUNT/3)){
+      playSignal(prevStartPlay, getSignalLevel(sequenceRecieved));
     } else {
       stopSignal(); 
     }
-      
   } else {
-    
+    radioDown();
   }
-}
 
-void playSignal(const int& durationOfSequence) {
-  long currentTime = millis();
-  tone(PIEZO_PIN, PIEZO_SIGNAL, durationOfSequence/2);
-  while (millis() - currentTime < durationOfSequence){
-    if (millis() - currentTime < durationOfSequence/2){
-      digitalWrite(LED_PIN_RED, HIGH);
-      digitalWrite(LED_PIN_GREEN, LOW);
-    } else {
-      digitalWrite(LED_PIN_RED, LOW);
-      digitalWrite(LED_PIN_GREEN, HIGH);      
-    }
-  }
-}
-
-void stopSignal(){
-  digitalWrite(LED_PIN_RED, LOW);
-  digitalWrite(LED_PIN_GREEN, LOW);
 }

@@ -87,6 +87,7 @@ float batteryStatus = 0.0;
 /*
   void updateBatteryStatus(float& battery);
 */
+
 //-------------
 
 
@@ -115,7 +116,6 @@ const String headToFile = String("h") + String(":") + String("m") + String(":") 
     int getFileCount( String dir );
     String initSDCard(const String& headToFile);
 */
-
 //-----------------------
 
           
@@ -148,6 +148,7 @@ RtcDateTime criticalRtcDateTime = RtcDateTime(criticalDateTime.date, criticalDat
   void updateRetrievalSensors(const bool& retrievalStatus);
   void updateRetrievalStatus(const RtcDateTime& critical, const RtcDateTime& loaded, bool& retrievalStatus);
 */
+
 
 //---------------------
 
@@ -187,6 +188,56 @@ void updateSavingButton(bool& buttonStatus){
 }
 //-----------------
 
+//----ProblemChecker----------
+  // indexes:
+byte temperatureProblem = 1; // 1 - 001
+byte barometerPrbolem = 2; // 2 - 010 
+byte batteryProblem = 3; // 3 - 011
+byte GPSProblem = 4; // 4 - 100 
+byte SDCardProblem = 5; // 5 - 101
+bool problemsOnSD = true;
+byte allWorks = 7; // 7 - 111
+
+byte delayIndex = 0;
+
+bool problemMatrix[8];
+byte pinIndexes[3] = {LED_STATUS1, LED_STATUS2, LED_STATUS3};
+
+void checkTemperature(bool* matrix, const byte& sensor){
+  if (tempDS18B20 == 0.0){
+    matrix[sensor] = true;
+  } else {
+    matrix[sensor] = false;
+  }
+}
+
+void checkBarometer(bool* matrix, const byte& sensor){
+  if (pressureBarometr == 0){
+    matrix[sensor] = true;
+  } else {
+    matrix[sensor] = false;
+  }
+}
+
+void checkBattery(bool* matrix, const byte& sensor){
+  if (batteryStatus == 0.0){
+    matrix[sensor] = true;
+  } else {
+    matrix[sensor] = false;
+  }
+}
+
+void checkGPS(bool* matrix, const byte& sensor){
+  if ((lat == 0.0) || (lon == 0.0)){
+    matrix[sensor] = true;
+  } else {
+    matrix[sensor] = false;
+  }
+}
+
+
+
+//-------------------------------
 
 void initAllSensors(){
   savedRtcDateTime = initSavedDateTime(); delay(100);
@@ -219,13 +270,30 @@ void updateNormalModeSensors(){
 
 }
 
+
+
+
+void sendToNano(const bool& retrievalStatus){
+  char sequence = 'N';
+  if (retrievalStatus) {
+    sequence = 'R';
+	NANO_SERIAL.print(sequence);
+  } 
+}
+
+
+
 void updateRetrievalModeSensors(){
   updateSavingButton(buttonWasActivated);
 
   updateRetrievalStatus(criticalRtcDateTime, savedRtcDateTime, retrievalStatus);
 
   updateRetrievalSensors(retrievalStatus);
+
+  sendToNano(retrievalStatus);
 }
+
+
 
 void setup() {
 
@@ -233,6 +301,8 @@ void setup() {
   Serial.begin(9600);
   
   GPS_SERIAL.begin(9600);
+
+  NANO_SERIAL.begin(9600);
 
   initAllSensors();
 
@@ -243,6 +313,8 @@ void loop() {
   updateRetrievalModeSensors();
   if (!retrievalStatus){
     updateNormalModeSensors();
+  } else {
+
   }
 
 }

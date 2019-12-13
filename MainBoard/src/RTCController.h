@@ -9,7 +9,7 @@ bool initRTC(){
 	//    2) the battery on the device is low or even missing
 
 		Serial.println("RTC lost confidence in the DateTime!");
-		Rtc.SetDateTime(compiled);
+		//Rtc.SetDateTime(compiled);
 	}
 
 	if (Rtc.GetIsWriteProtected()){

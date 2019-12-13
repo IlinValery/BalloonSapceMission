@@ -8,10 +8,10 @@
 #define LED_PIN_RED 13
 #define LED_PIN_GREEN 12  
 
-#define LED_STATUS_GPS 43
-#define LED_STATUS_DS18B20 41
-#define LED_STATUS_BAROMETER 39
-#define LED_STATUS_SD 37
+#define LED_STATUS1 43
+#define LED_STATUS2 41
+#define LED_STATUS3 39
+#define LED_STATUS_ORIENTATION 37
 //
 
 //RTC
@@ -25,12 +25,15 @@
 #define FILE_SEPARATOR "\t"
 //-------------
 
+#define NANO_SERIAL Serial1
+#define DEBUG_NANO true
+
 #define GPS_SERIAL Serial2
 
 
 #define RELAY1 23
 #define BTN_PIN 9 
 
-#define CRITICAL_DATE "Dec 11 2019"
-#define CRITICAL_TIME "20:00:00"
-#define TIME_DIFFERENCE_SECONDS 60*20 //4*60*60 // in seconds
+#define CRITICAL_DATE "Dec 14 2019"
+#define CRITICAL_TIME "16:30:00"
+#define TIME_DIFFERENCE_SECONDS 4*60*60 // in seconds
